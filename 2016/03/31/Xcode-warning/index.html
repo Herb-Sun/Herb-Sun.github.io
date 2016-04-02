@@ -1,0 +1,632 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.5.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Xcode,MAC," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.5.0" />
+
+
+
+
+
+
+<meta name="description" content="在开发过程中,我们编译工程的时候难免会报一些警告,虽然Xcode能编译通过,但是对于强迫症的我来说,是不能容忍的.因此,在此我写下我的解决之道.
+系统宏解决有些时候我们用的方法deprecated,但是为了兼容就只能用,因此对于这种特定的警告我一般用系统提供的宏来解决:
+1234#pragma clang diagnostic push#pragma clang diagnostic ignore">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Xcode警告的那些事儿">
+<meta property="og:url" content="http://yoursite.com/2016/03/31/Xcode-warning/index.html">
+<meta property="og:site_name" content="Herb">
+<meta property="og:description" content="在开发过程中,我们编译工程的时候难免会报一些警告,虽然Xcode能编译通过,但是对于强迫症的我来说,是不能容忍的.因此,在此我写下我的解决之道.
+系统宏解决有些时候我们用的方法deprecated,但是为了兼容就只能用,因此对于这种特定的警告我一般用系统提供的宏来解决:
+1234#pragma clang diagnostic push#pragma clang diagnostic ignore">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/224953-a5dcad4fa96758a2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/224953-18bcf3372339f03b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/224953-130b30b2d25a8519.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2016-04-02T06:34:26.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Xcode警告的那些事儿">
+<meta name="twitter:description" content="在开发过程中,我们编译工程的时候难免会报一些警告,虽然Xcode能编译通过,但是对于强迫症的我来说,是不能容忍的.因此,在此我写下我的解决之道.
+系统宏解决有些时候我们用的方法deprecated,但是为了兼容就只能用,因此对于这种特定的警告我一般用系统提供的宏来解决:
+1234#pragma clang diagnostic push#pragma clang diagnostic ignore">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/224953-a5dcad4fa96758a2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> Xcode警告的那些事儿 | Herb </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?d5bd9898e51248158f7ac655b772cf61";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Herb</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">既然选择远方，便只顾风雨兼程！</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'NtAhzM-sz4T5Nsn6HYJf','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Xcode警告的那些事儿
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-03-31T08:40:16+08:00" content="2016-03-31">
+              2016-03-31
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/03/31/Xcode-warning/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/03/31/Xcode-warning/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在开发过程中,我们编译工程的时候难免会报一些警告,虽然Xcode能编译通过,但是对于强迫症的我来说,是不能容忍的.因此,在此我写下我的解决之道.</p>
+<h3 id="系统宏解决"><a href="#系统宏解决" class="headerlink" title="系统宏解决"></a>系统宏解决</h3><p>有些时候我们用的方法deprecated,但是为了兼容就只能用,因此对于这种特定的警告我一般用系统提供的宏来解决:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#pragma clang diagnostic push</span></span><br><span class="line"><span class="meta">#pragma clang diagnostic ignored <span class="meta-string">"-Wdeprecated-declarations"</span></span></span><br><span class="line">    <span class="comment">//将编译器提示-Wdeprecated-declarations警告的代码放在这里即可</span></span><br><span class="line"><span class="meta">#pragma clang diagnostic pop</span></span><br></pre></td></tr></table></figure>
+<p>其他类型的警告同理,只需修改ignored后面的警告类型就可以了.</p>
+<h3 id="文件解决"><a href="#文件解决" class="headerlink" title="文件解决"></a>文件解决</h3><p>系统宏固然好用,但是对于我们引入的第三方库就有点麻烦了,因为第三方库会不定时更新,那么一旦更新了三方库,我们去除警告的宏语句就被覆盖了.(因此大家写自己三方库的时候一定要注意警告问题哦O(∩_∩)O),针对这个问题解决方法:</p>
+<ol>
+<li>进入工程的Build Phases下面找到Compile Sources点开之后我们编译的所有文件都在这呢.</li>
+</ol>
+
+<ol>
+<li>找到你要去除警告的那个文件,双击这个文件,Xcode会弹出一个框,然后你将你想要去除的警告类型放在里面就大功告成啦!!!</li>
+</ol>
+<p><img src="http://upload-images.jianshu.io/upload_images/224953-a5dcad4fa96758a2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="屏幕快照 2016-03-13 下午5.59.08.png"></p>
+<h3 id="全工程解决"><a href="#全工程解决" class="headerlink" title="全工程解决"></a>全工程解决</h3><p>文件解决固然好,但是又有个问题了,太多文件报一种错误咋办啊? 总不能一个一个的改吧,哈哈,也有方法:</p>
+<ol>
+<li>找到工程的Build Settings,然后找到里面的Other Warning Flags这个选项</li>
+<li>然后在后面添加上你要忽略的警告类型就可以了,这里还可以针对Debug和Release环境分别设置呢.</li>
+</ol>
+<p><img src="http://upload-images.jianshu.io/upload_images/224953-18bcf3372339f03b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="屏幕快照 2016-03-13 下午6.26.47.png"></p>
+<p>这下编译工程看看,是不是舒心了好多,赶紧做吧,我去吃点治强迫症的药,药不能停😂</p>
+<h3 id="4-如何查看警告类型"><a href="#4-如何查看警告类型" class="headerlink" title="4.如何查看警告类型"></a>4.如何查看警告类型</h3><p>知道如何去除了,但是不知道警告类型可不行.我们编译的时候在错误警告提示面板上,右击这个警告,然后点击Reveal in Log,就能看到警告的详细信息了,里面就有警告类型啦.</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/224953-130b30b2d25a8519.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="屏幕快照 2016-03-13 下午6.42.26.png"></p>
+<h3 id="结尾总结"><a href="#结尾总结" class="headerlink" title="结尾总结"></a>结尾总结</h3><p>去除警告固然舒心,但是不要去除所有的警告,警告也应该是我们关注的一部分,我认为对待警告和对待错误的态度应该一致才行.</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Xcode/" rel="tag">#Xcode</a>
+          
+            <a href="/tags/MAC/" rel="tag">#MAC</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/03/30/hello-world/" rel="next" title="Hello World">
+                <i class="fa fa-chevron-left"></i> Hello World
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/03/31/Xcode-warning/"
+           data-title="Xcode警告的那些事儿" data-url="http://yoursite.com/2016/03/31/Xcode-warning/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Herb" />
+          <p class="site-author-name" itemprop="name">Herb</p>
+          <p class="site-description motion-element" itemprop="description">iOS开发工程师，目前仍在努力耕耘中，对交互设计也有浓重的兴趣。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Herb-Sun" target="_blank">
+                  
+                    <i class="fa fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/Herb__Sun" target="_blank">
+                  
+                    <i class="fa fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://Weibo.com/Herb_Sun" target="_blank">
+                  
+                    <i class="fa fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        <div class="links-of-blogroll motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#系统宏解决"><span class="nav-number">1.</span> <span class="nav-text">系统宏解决</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文件解决"><span class="nav-number">2.</span> <span class="nav-text">文件解决</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#全工程解决"><span class="nav-number">3.</span> <span class="nav-text">全工程解决</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-如何查看警告类型"><span class="nav-number">4.</span> <span class="nav-text">4.如何查看警告类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结尾总结"><span class="nav-number">5.</span> <span class="nav-text">结尾总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Herb</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+
+  
+
+
+
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=0.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=0.5.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=0.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=0.5.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=0.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=0.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=0.5.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"Blog-Herb"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>
